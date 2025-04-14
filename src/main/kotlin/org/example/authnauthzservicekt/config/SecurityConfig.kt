@@ -1,5 +1,6 @@
-package org.example.authnauthzservicekt.auth
+package org.example.authnauthzservicekt.config
 
+import org.example.authnauthzservicekt.auth.JwtAuthenticationFilter
 import org.example.authnauthzservicekt.model.Role
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
