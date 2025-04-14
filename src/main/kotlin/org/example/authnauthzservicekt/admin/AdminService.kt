@@ -10,7 +10,7 @@ class AdminService(
 ) {
 
     fun remove(id: Long) {
-        val user = userRepository.findById(id)
+        userRepository.findById(id)
             .orElseThrow { RuntimeException("User not found") }
             .let {
                 it.isActive = false
@@ -19,13 +19,13 @@ class AdminService(
     }
 
     fun getUserById(id: Long) {
-        val user = userRepository.findById(id).orElseThrow {
+        userRepository.findById(id).orElseThrow {
             RuntimeException("User not found")
         }
     }
 
     fun changeRoleToAdmin(id: Long) {
-        val user = userRepository.findById(id)
+        userRepository.findById(id)
             .orElseThrow { RuntimeException("User not found") }
             .let {
                 it.role = Role.ADMIN

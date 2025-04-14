@@ -1,5 +1,6 @@
 package org.example.authnauthzservicekt.auth
 
+import org.example.authnauthzservicekt.model.Role
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -26,7 +27,7 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/api/v1/auth/register","/api/v1/auth/login").permitAll()
-                    .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN")
+                    .requestMatchers("/api/v1/admin/**").hasAnyRole(Role.ADMIN.name)
                     .anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
