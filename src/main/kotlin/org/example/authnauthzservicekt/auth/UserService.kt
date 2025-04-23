@@ -99,7 +99,7 @@ class UserService(
             }
 
     fun login(request: AuthenticationRequestDto): String =
-        userRepository.findByEmail(request.login)?.takeIf {
+        userRepository.findByEmail(request.login).takeIf {
             passwordEncoder.matches(request.password, it.password)
         }?.let {
             val auth = UsernamePasswordAuthenticationToken(it.email, it.password)
@@ -108,7 +108,8 @@ class UserService(
 
     fun resetPasswordWithVerifyCode(resetPasswordDto: ResetPasswordDto) {
         userRepository.findByEmail(resetPasswordDto.email)
-            .takeIf {resetPasswordDto.verifyCode == it.verifyCode}
+            .takeIf { resetPasswordDto.verifyCode == it.verifyCode
+                        && resetPasswordDto.verifyCode != "" }
             ?.apply { password = passwordEncoder.encode(resetPasswordDto.newPassword)}
             ?.let {
                 it.verifyCode = ""
