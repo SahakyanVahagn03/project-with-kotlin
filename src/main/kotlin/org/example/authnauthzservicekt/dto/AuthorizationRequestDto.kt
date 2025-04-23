@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 data class AuthorizationRequestDto(
     val email: String,
     val password: String,
+    val phoneNumber: String,
 )
 
 fun AuthorizationRequestDto.auhZRequestDtoToUser(passwordEncoder: PasswordEncoder): User {
@@ -15,6 +16,8 @@ fun AuthorizationRequestDto.auhZRequestDtoToUser(passwordEncoder: PasswordEncode
         email = email,
         password = passwordEncoder.encode(password),
         isActive = true,
-        role = Role.USER
+        role = Role.USER,
+        phoneNumber = phoneNumber,
+        verifyCode = ""
     )
 }

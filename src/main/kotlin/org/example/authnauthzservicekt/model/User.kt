@@ -15,9 +15,13 @@ data class User(
     @Column(unique = true)
     val email: String,
 
-    val password: String,
+    var password: String,
 
     var isActive: Boolean,
+
+    val phoneNumber: String,
+
+    var verifyCode: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -38,7 +42,9 @@ data class User(
             email = email,
             password = password,
             isActive = true,
-            role = Role.USER
+            role = Role.USER,
+            phoneNumber = phoneNumber,
+            verifyCode = verifyCode,
         )
     }
 }

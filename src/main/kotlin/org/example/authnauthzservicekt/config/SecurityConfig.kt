@@ -27,7 +27,11 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
         http.csrf { it.disable() }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/v1/auth/register","/api/v1/auth/login").permitAll()
+                    .requestMatchers("/api/v1/auth/register",
+                        "/api/v1/auth/login","/api/v1/auth/send/recovery-code/**",
+                        "/api/v1/auth/reset-password",
+                        "/api/v1/auth/send/recovery-code/**"
+                    ).permitAll()
                     .requestMatchers("/api/v1/admin/**").hasAnyRole(Role.ADMIN.name)
                     .anyRequest().authenticated()
             }

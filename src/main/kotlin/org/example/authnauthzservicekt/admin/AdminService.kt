@@ -18,12 +18,6 @@ class AdminService(
             }
     }
 
-    fun getUserById(id: Long) {
-        userRepository.findById(id).orElseThrow {
-            RuntimeException("User not found")
-        }
-    }
-
     fun changeRoleToAdmin(id: Long) {
         userRepository.findById(id)
             .orElseThrow { RuntimeException("User not found") }

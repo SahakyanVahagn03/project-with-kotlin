@@ -1,5 +1,6 @@
 package org.example.authnauthzservicekt.admin
 
+import org.example.authnauthzservicekt.auth.UserService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -8,7 +9,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/admin")
-class AdminController(private val adminService: AdminService) {
+class AdminController(
+    private val adminService: AdminService,
+    private val userService: UserService
+) {
 
     @GetMapping("/remove/user/{id}")
     fun removeUser(@PathVariable id: Long){
@@ -17,7 +21,7 @@ class AdminController(private val adminService: AdminService) {
 
     @GetMapping("/user/{id}")
     fun getUserById(@PathVariable id: Long){
-        adminService.getUserById(id)
+        userService.getUserById(id)
     }
 
     @GetMapping("/change/role-admin/{id}")
