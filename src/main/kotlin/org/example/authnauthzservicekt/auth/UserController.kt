@@ -6,6 +6,9 @@ import org.example.authnauthzservicekt.dto.AuthorizationRequestDto
 import org.example.authnauthzservicekt.dto.AuthorizationResponseDto
 import org.example.authnauthzservicekt.dto.ResetPasswordDto
 import org.example.authnauthzservicekt.model.ResetOption
+import org.example.authnauthzservicekt.model.User
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.*
 
 
@@ -37,5 +40,4 @@ class UserController(private val userService: UserService) {
     ) {
         userService.resetPasswordWithVerifyCode(resetPasswordDto)
     }
-
 }

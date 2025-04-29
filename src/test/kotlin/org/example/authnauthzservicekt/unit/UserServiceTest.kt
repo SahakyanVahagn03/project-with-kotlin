@@ -9,12 +9,10 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
-import java.util.*
 
 class UserServiceTest {
 
@@ -39,7 +37,6 @@ class UserServiceTest {
             userRepository,
             jwtTokenProvider,
             twilioConfig,
-            validator,
             emailSender
         )
     }

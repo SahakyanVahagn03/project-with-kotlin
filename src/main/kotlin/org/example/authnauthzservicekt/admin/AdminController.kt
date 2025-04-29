@@ -1,6 +1,7 @@
 package org.example.authnauthzservicekt.admin
 
 import org.example.authnauthzservicekt.auth.UserService
+import org.example.authnauthzservicekt.model.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,8 +21,8 @@ class AdminController(
     }
 
     @GetMapping("/user/{id}")
-    fun getUserById(@PathVariable id: Long){
-        userService.getUserById(id)
+    fun getUserById(@PathVariable id: Long) : User {
+        return userService.getUserById(id)
     }
 
     @GetMapping("/change/role-admin/{id}")

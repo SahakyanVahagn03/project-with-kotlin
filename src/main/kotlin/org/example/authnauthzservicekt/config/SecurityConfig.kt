@@ -27,13 +27,26 @@ class SecurityConfig(private val jwtAuthenticationFilter: JwtAuthenticationFilte
         http.csrf { it.disable() }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/v1/auth/register",
-                        "/api/v1/auth/login","/api/v1/auth/send/recovery-code/**",
+                    .requestMatchers(
+                        "/api/v1/auth/register",
+                        "/api/v1/auth/login",
+                        "/api/v1/auth/send/recovery-code/**",
                         "/api/v1/auth/reset-password",
                         "/api/v1/auth/send/recovery-code/**"
                     ).permitAll()
                     .requestMatchers("/api/v1/admin/**").hasAnyRole(Role.ADMIN.name)
-                    .anyRequest().authenticated()
+                    .requestMatchers(
+                        "/user/become-teacher",
+                        "/api/v1/channel/join/**",
+                    ).hasAnyRole(Role.USER.name)
+                    .requestMatchers(
+                        "/user/approved/teacher/**",
+                        "/user/reject-user/**",
+                        "/api/v1/channel/reject/**",
+                        "/api/v1/channel/create-channel",
+                        "/api/v1/channel/remove-channel/**"
+                    ).hasAnyRole(Role.TEACHER.name)
+                    .anyRequest().permitAll()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()

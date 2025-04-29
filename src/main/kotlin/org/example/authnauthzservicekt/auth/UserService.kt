@@ -1,19 +1,20 @@
 package org.example.authnauthzservicekt.auth
 
 import com.twilio.Twilio
-import jakarta.annotation.PostConstruct
-import org.example.authnauthzservicekt.config.TwilioConfig
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.stereotype.Service
 import com.twilio.rest.api.v2010.account.Message
 import com.twilio.type.PhoneNumber
+import jakarta.annotation.PostConstruct
+import org.example.authnauthzservicekt.config.TwilioConfig
 import org.example.authnauthzservicekt.dto.*
 import org.example.authnauthzservicekt.model.ResetOption
 import org.example.authnauthzservicekt.model.User
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
@@ -23,8 +24,9 @@ class UserService(
     private val userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val twilioConfig: TwilioConfig,
-    defaultValidator: LocalValidatorFactoryBean,
-    private val emailSender: JavaMailSender
+    private val emailSender: JavaMailSender,
+
+
 
 ) {
     @PostConstruct
@@ -32,7 +34,7 @@ class UserService(
         Twilio.init(twilioConfig.sid,twilioConfig.token)
     }
 
-    fun generateCodeAndSave(email:String) : User? {
+    fun generateCodeAndSave(email: String): User? {
         userRepository.findByEmail(email)?.let { user ->
             val verifyCode = UUID.randomUUID().toString().replace("-", "").take(5)
             user.verifyCode = verifyCode
@@ -71,10 +73,22 @@ class UserService(
         emailSender.send(message)
     }
 
-    fun getUserById(id: Long) {
+    fun getUserById(id: Long) : User {
         userRepository.findById(id).orElseThrow {
             RuntimeException("User not found")
+        }.let {
+            when(it.isActive){
+                true -> return it
+                else -> throw RuntimeException("User ${it.id} is not active")
+            }
         }
+    }
+
+    fun getCurrentUser() : User? {
+        val authentication = SecurityContextHolder.getContext()
+            .authentication.principal
+        val userDetails = authentication as UserDetails
+        return userRepository.findByEmail(userDetails.username)
     }
 
     fun sendSmsForReset(to:String,text:String) {
@@ -99,7 +113,7 @@ class UserService(
             }
 
     fun login(request: AuthenticationRequestDto): String =
-        userRepository.findByEmail(request.login).takeIf {
+        userRepository.findByEmail(request.login)?.takeIf {
             passwordEncoder.matches(request.password, it.password)
         }?.let {
             val auth = UsernamePasswordAuthenticationToken(it.email, it.password)
@@ -108,7 +122,7 @@ class UserService(
 
     fun resetPasswordWithVerifyCode(resetPasswordDto: ResetPasswordDto) {
         userRepository.findByEmail(resetPasswordDto.email)
-            .takeIf { resetPasswordDto.verifyCode == it.verifyCode
+            ?.takeIf { resetPasswordDto.verifyCode == it.verifyCode
                         && resetPasswordDto.verifyCode != "" }
             ?.apply { password = passwordEncoder.encode(resetPasswordDto.newPassword)}
             ?.let {
